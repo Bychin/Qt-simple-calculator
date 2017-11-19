@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <widget class="QLabel" name="label"/>
+   <widget class="QRadioButton" name="radioButtonSimple">
+    <property name="text">
+     <string>Обычный</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="radioButtonCompl">
+    <property name="text">
+     <string>Инженерный</string>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>
