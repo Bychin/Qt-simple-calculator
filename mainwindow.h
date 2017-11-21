@@ -20,6 +20,9 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    bool OnlyDigits();
+    void SetDigits(bool);
+
 private:
     Ui::MainWindow *ui;
 
@@ -40,23 +43,21 @@ private:
     void SpawnSimpleMode();
     void SpawnComplMode();
 
+    bool digits_only = true;
+
 public slots:
     void SwitchMode();
 
-    /*void DigitOrSignClicked();
+    void NumberClicked();
+    void SpecialSignClicked();
+    void SignClicked();
+    void DotClicked();
     void FunctionClicked();
 
     void ClearInput();
+    void BackSpace();
     void Equals();
-
-    void Add_x_y();
-    void Add_x_square();
-    void Add_x_cubed();
-    void Add_x_fact();
-    void Add_x_root_y();
-    void Add_x_root_3();
-    void Add_invert();*/
-
+    void Invert();
 };
 
 #endif // MAINWINDOW_H

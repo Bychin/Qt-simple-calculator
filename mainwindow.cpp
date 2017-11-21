@@ -5,20 +5,20 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <cctype>
+
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
-
     setWindowTitle("Калькулятор (обычный)");
     setWindowOpacity(0.98);
-    setGeometry(QRect(300, 300, 380, 450));
     setMinimumSize(380, 450);
     setMaximumSize(380, 450);
-    ui->label->setText("0");
 
+    ui->lineEdit->setPlaceholderText("0");
+    ui->lineEdit->setReadOnly(true);
     ui->radioButtonSimple->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     ui->radioButtonCompl->setSizePolicy( QSizePolicy::Preferred, QSizePolicy::Preferred);
-
     ui->radioButtonSimple->setChecked(true);
     connect(ui->radioButtonSimple, SIGNAL(toggled(bool)), SLOT(SwitchMode()));
 
@@ -91,7 +91,7 @@ void MainWindow::CreateSimpleCalcWidget() {
     QPushButton* pushButton9 =      new QPushButton("9");
     QPushButton* pushButtonDot =    new QPushButton(",");
     QPushButton* pushButtonPlus =   new QPushButton("+");
-    QPushButton* pushButtonMinus =  new QPushButton(QString::fromUtf8("\u2212"));
+    QPushButton* pushButtonMinus =  new QPushButton(QString::fromUtf8("-"));
     QPushButton* pushButtonMult =   new QPushButton(QString::fromUtf8("\u00D7"));
     QPushButton* pushButtonDivide = new QPushButton(QString::fromUtf8("\u00F7"));
     QPushButton* pushButtonEquals = new QPushButton("=");
@@ -164,24 +164,24 @@ void MainWindow::CreateSimpleCalcWidget() {
     simpleCalcWidget = new QWidget(this);
     simpleCalcWidget->setLayout(simpleCalcLayout);
 
-    connect(pushButton0,      SIGNAL(clicked()), this, SLOT(DigitOrSignClicked()));
-    connect(pushButton1,      SIGNAL(clicked()), this, SLOT(DigitOrSignClicked()));
-    connect(pushButton2,      SIGNAL(clicked()), this, SLOT(DigitOrSignClicked()));
-    connect(pushButton3,      SIGNAL(clicked()), this, SLOT(DigitOrSignClicked()));
-    connect(pushButton4,      SIGNAL(clicked()), this, SLOT(DigitOrSignClicked()));
-    connect(pushButton5,      SIGNAL(clicked()), this, SLOT(DigitOrSignClicked()));
-    connect(pushButton6,      SIGNAL(clicked()), this, SLOT(DigitOrSignClicked()));
-    connect(pushButton7,      SIGNAL(clicked()), this, SLOT(DigitOrSignClicked()));
-    connect(pushButton8,      SIGNAL(clicked()), this, SLOT(DigitOrSignClicked()));
-    connect(pushButton9,      SIGNAL(clicked()), this, SLOT(DigitOrSignClicked()));
-    connect(pushButtonPlus,   SIGNAL(clicked()), this, SLOT(DigitOrSignClicked()));
-    connect(pushButtonMinus,  SIGNAL(clicked()), this, SLOT(DigitOrSignClicked()));
-    connect(pushButtonMult,   SIGNAL(clicked()), this, SLOT(DigitOrSignClicked()));
-    connect(pushButtonDivide, SIGNAL(clicked()), this, SLOT(DigitOrSignClicked()));
-    connect(pushButtonSqrt,   SIGNAL(clicked()), this, SLOT(FunctionClicked()));
-    connect(pushButtonDot,    SIGNAL(clicked()), this, SLOT(DigitOrSignClicked()));
+    connect(pushButton0,      SIGNAL(clicked()), this, SLOT(NumberClicked()));
+    connect(pushButton1,      SIGNAL(clicked()), this, SLOT(NumberClicked()));
+    connect(pushButton2,      SIGNAL(clicked()), this, SLOT(NumberClicked()));
+    connect(pushButton3,      SIGNAL(clicked()), this, SLOT(NumberClicked()));
+    connect(pushButton4,      SIGNAL(clicked()), this, SLOT(NumberClicked()));
+    connect(pushButton5,      SIGNAL(clicked()), this, SLOT(NumberClicked()));
+    connect(pushButton6,      SIGNAL(clicked()), this, SLOT(NumberClicked()));
+    connect(pushButton7,      SIGNAL(clicked()), this, SLOT(NumberClicked()));
+    connect(pushButton8,      SIGNAL(clicked()), this, SLOT(NumberClicked()));
+    connect(pushButton9,      SIGNAL(clicked()), this, SLOT(NumberClicked()));
+    connect(pushButtonPlus,   SIGNAL(clicked()), this, SLOT(SignClicked()));
+    connect(pushButtonMinus,  SIGNAL(clicked()), this, SLOT(SignClicked()));
+    connect(pushButtonMult,   SIGNAL(clicked()), this, SLOT(SignClicked()));
+    connect(pushButtonDivide, SIGNAL(clicked()), this, SLOT(SignClicked()));
+    connect(pushButtonSqrt,   SIGNAL(clicked()), this, SLOT(SpecialSignClicked()));
+    connect(pushButtonDot,    SIGNAL(clicked()), this, SLOT(DotClicked()));
     connect(pushButtonEquals, SIGNAL(clicked()), this, SLOT(Equals()));
-    connect(pushButtonInvert, SIGNAL(clicked()), this, SLOT(Add_invert()));
+    connect(pushButtonInvert, SIGNAL(clicked()), this, SLOT(Invert()));
 }
 
 void MainWindow::CreateComplCalcWidget() {
@@ -196,11 +196,11 @@ void MainWindow::CreateComplCalcWidget() {
     QPushButton* pushButtonTanh     = new QPushButton("th");
     QPushButton* pushButtonTan      = new QPushButton("tan");
     QPushButton* pushButtonLog      = new QPushButton("log");
-    QPushButton* pushButtonXYed     = new QPushButton(QString::fromUtf8("x\u207F"));
+    QPushButton* pushButtonXNed     = new QPushButton(QString::fromUtf8("x\u207F"));
     QPushButton* pushButtonFact     = new QPushButton("n!");
     QPushButton* pushButtonPi       = new QPushButton(QString::fromUtf8("\u03C0"));
     QPushButton* pushButtonCubeRoot = new QPushButton(QString::fromUtf8("\u00B3\u221A"));
-    QPushButton* pushButtonYRoot    = new QPushButton(QString::fromUtf8("\u207F\u221A"));
+    QPushButton* pushButtonNRoot    = new QPushButton(QString::fromUtf8("\u207F\u221A"));
 
     pushButtonSinh->setSizePolicy(    QSizePolicy::Preferred, QSizePolicy::Preferred);
     pushButtonSin->setSizePolicy(     QSizePolicy::Preferred, QSizePolicy::Preferred);
@@ -213,11 +213,11 @@ void MainWindow::CreateComplCalcWidget() {
     pushButtonTanh->setSizePolicy(    QSizePolicy::Preferred, QSizePolicy::Preferred);
     pushButtonTan->setSizePolicy(     QSizePolicy::Preferred, QSizePolicy::Preferred);
     pushButtonLog->setSizePolicy(     QSizePolicy::Preferred, QSizePolicy::Preferred);
-    pushButtonXYed->setSizePolicy(    QSizePolicy::Preferred, QSizePolicy::Preferred);
+    pushButtonXNed->setSizePolicy(    QSizePolicy::Preferred, QSizePolicy::Preferred);
     pushButtonFact->setSizePolicy(    QSizePolicy::Preferred, QSizePolicy::Preferred);
     pushButtonPi->setSizePolicy(      QSizePolicy::Preferred, QSizePolicy::Preferred);
     pushButtonCubeRoot->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-    pushButtonYRoot->setSizePolicy(   QSizePolicy::Preferred, QSizePolicy::Preferred);
+    pushButtonNRoot->setSizePolicy(   QSizePolicy::Preferred, QSizePolicy::Preferred);
 
     QString StyleSheetSpecSigns = "QPushButton {max-width: 77px; color: black; background-color: #E6E6E6; border: none; font: 14pt 'Microsoft YaHei UI Light'; outline: none; } QPushButton:hover { background-color: #D8D8D8; border-style: solid; border-width: 3px; border-color: #E6E6E6; } QPushButton:pressed { background-color: #A4A4A4; border-style: solid; border-width: 3px; border-color: #E6E6E6; }";
     QString StyleSheetSpecRoot =  "QPushButton {max-width: 77px; color: black; background-color: #E6E6E6; border: none; font: 16pt 'Microsoft YaHei UI Light'; outline: none; } QPushButton:hover { background-color: #D8D8D8; border-style: solid; border-width: 3px; border-color: #E6E6E6; } QPushButton:pressed { background-color: #A4A4A4; border-style: solid; border-width: 3px; border-color: #E6E6E6; }";
@@ -228,7 +228,7 @@ void MainWindow::CreateComplCalcWidget() {
     pushButtonExp->setStyleSheet(     StyleSheetSpecSigns);
     pushButtonPi->setStyleSheet(      StyleSheetSpecSigns);
     pushButtonCubeRoot->setStyleSheet(StyleSheetSpecRoot);
-    pushButtonYRoot->setStyleSheet(   StyleSheetSpecRoot);
+    pushButtonNRoot->setStyleSheet(   StyleSheetSpecRoot);
     pushButtonTanh->setStyleSheet(    StyleSheetSpecSigns);
     pushButtonTan->setStyleSheet(     StyleSheetSpecSigns);
     pushButtonFact->setStyleSheet(    StyleSheetSpecSigns);
@@ -236,7 +236,7 @@ void MainWindow::CreateComplCalcWidget() {
     pushButtonLog->setStyleSheet(     StyleSheetSpecSigns);
     pushButtonXSq->setStyleSheet(     StyleSheetSpecSigns);
     pushButtonXCubed->setStyleSheet(  StyleSheetSpecSigns);
-    pushButtonXYed->setStyleSheet(    StyleSheetSpecSigns);
+    pushButtonXNed->setStyleSheet(    StyleSheetSpecSigns);
 
     complCalcLayout = new QGridLayout(this);
     complCalcLayout->setSpacing(0);
@@ -253,31 +253,31 @@ void MainWindow::CreateComplCalcWidget() {
     complCalcLayout->addWidget(pushButtonTanh,     2, 0, 1, 1);
     complCalcLayout->addWidget(pushButtonTan,      2, 1, 1, 1);
     complCalcLayout->addWidget(pushButtonLog,      2, 2, 1, 1);
-    complCalcLayout->addWidget(pushButtonXYed,     2, 3, 1, 1);
+    complCalcLayout->addWidget(pushButtonXNed,     2, 3, 1, 1);
     complCalcLayout->addWidget(pushButtonFact,     3, 0, 1, 1);
     complCalcLayout->addWidget(pushButtonPi,       3, 1, 1, 1);
     complCalcLayout->addWidget(pushButtonCubeRoot, 3, 2, 1, 1);
-    complCalcLayout->addWidget(pushButtonYRoot,    3, 3, 1, 1);
+    complCalcLayout->addWidget(pushButtonNRoot,    3, 3, 1, 1);
 
     complCalcWidget = new QWidget(this);
     complCalcWidget->setLayout(complCalcLayout);
 
-    connect(pushButtonSin,      SIGNAL(clicked()), this, SLOT(FunctionClicked()));
-    connect(pushButtonSinh,     SIGNAL(clicked()), this, SLOT(FunctionClicked()));
-    connect(pushButtonCos,      SIGNAL(clicked()), this, SLOT(FunctionClicked()));
-    connect(pushButtonCosh,     SIGNAL(clicked()), this, SLOT(FunctionClicked()));
-    connect(pushButtonFact,     SIGNAL(clicked()), this, SLOT(Add_x_fact()));
-    connect(pushButtonTan,      SIGNAL(clicked()), this, SLOT(FunctionClicked()));
-    connect(pushButtonTanh,     SIGNAL(clicked()), this, SLOT(FunctionClicked()));
-    connect(pushButtonLn,       SIGNAL(clicked()), this, SLOT(FunctionClicked()));
-    connect(pushButtonLog,      SIGNAL(clicked()), this, SLOT(FunctionClicked()));
-    connect(pushButtonXYed,     SIGNAL(clicked()), this, SLOT(Add_x_y()));
-    connect(pushButtonXSq,      SIGNAL(clicked()), this, SLOT(FunctionClicked()));
-    connect(pushButtonXCubed,   SIGNAL(clicked()), this, SLOT(Add_x_cubed()));
-    connect(pushButtonCubeRoot, SIGNAL(clicked()), this, SLOT(Add_x_root_3()));
-    connect(pushButtonYRoot,    SIGNAL(clicked()), this, SLOT(Add_x_root_y()));
-    connect(pushButtonExp,      SIGNAL(clicked()), this, SLOT(FunctionClicked()));
-    connect(pushButtonPi,       SIGNAL(clicked()), this, SLOT(DigitOrSignClicked()));
+    connect(pushButtonSin,      SIGNAL(clicked()), this, SLOT(SpecialSignClicked()));
+    connect(pushButtonSinh,     SIGNAL(clicked()), this, SLOT(SpecialSignClicked()));
+    connect(pushButtonCos,      SIGNAL(clicked()), this, SLOT(SpecialSignClicked()));
+    connect(pushButtonCosh,     SIGNAL(clicked()), this, SLOT(SpecialSignClicked()));
+    connect(pushButtonFact,     SIGNAL(clicked()), this, SLOT(SpecialSignClicked()));
+    connect(pushButtonTan,      SIGNAL(clicked()), this, SLOT(SpecialSignClicked()));
+    connect(pushButtonTanh,     SIGNAL(clicked()), this, SLOT(SpecialSignClicked()));
+    connect(pushButtonLn,       SIGNAL(clicked()), this, SLOT(SpecialSignClicked()));
+    connect(pushButtonLog,      SIGNAL(clicked()), this, SLOT(SpecialSignClicked()));
+    connect(pushButtonXNed,     SIGNAL(clicked()), this, SLOT(FunctionClicked()));
+    connect(pushButtonXSq,      SIGNAL(clicked()), this, SLOT(SpecialSignClicked()));
+    connect(pushButtonXCubed,   SIGNAL(clicked()), this, SLOT(SpecialSignClicked()));
+    connect(pushButtonCubeRoot, SIGNAL(clicked()), this, SLOT(SpecialSignClicked()));
+    connect(pushButtonNRoot,    SIGNAL(clicked()), this, SLOT(FunctionClicked()));
+    connect(pushButtonExp,      SIGNAL(clicked()), this, SLOT(SpecialSignClicked()));
+    connect(pushButtonPi,       SIGNAL(clicked()), this, SLOT(NumberClicked())); ///
 }
 
 void MainWindow::CreateDefaultCalcWidget() {
@@ -287,24 +287,22 @@ void MainWindow::CreateDefaultCalcWidget() {
     QString StyleSheetBackSpace = "QPushButton { color: black; background-color: #E6E6E6; border: none; font: 17pt 'Microsoft YaHei UI Light'; outline: none; } QPushButton:hover { background-color: #D8D8D8; border-style: solid; border-width: 3px; border-color: #E6E6E6; } QPushButton:pressed { background-color: #A4A4A4; border-style: solid; border-width: 3px; border-color: #E6E6E6; }";
     QString StyleSheetClear =     "QPushButton { color: black; background-color: #E6E6E6; border: none; font: 17pt 'Microsoft YaHei UI'; outline: none; } QPushButton:hover { background-color: #D8D8D8; border-style: solid; border-width: 3px; border-color: #E6E6E6; } QPushButton:pressed { background-color: #A4A4A4; border-style: solid; border-width: 3px; border-color: #E6E6E6; }";
     QString StyleSheetRadioButton = "QRadioButton {background-color: #E6E6E6; font: 10pt 'Microsoft YaHei UI Light'; padding: 0px 0px 0px 20px;} QRadioButton::indicator { width: 20px; height: 20px; } QRadioButton::indicator::unchecked {image: url(radio_normal.svg);} QRadioButton::indicator:unchecked:hover {image: url(radio_normal.svg);} QRadioButton::indicator:unchecked:pressed {image: url(radio_checked.svg);} QRadioButton::indicator:checked {image: url(radio_checked.svg);} QRadioButton::indicator:checked:hover {image: url(radio_checked.svg);} QRadioButton::indicator:checked:pressed {image: url(radio_checked.svg);}";
-    QString StyleSheetLabel = "QLabel {font: 26pt 'Microsoft YaHei UI'; qproperty-alignment: AlignRight; margin: 5px;}";
+    QString StyleSheetLine = "QLineEdit {font: 26pt 'Microsoft YaHei UI'; qproperty-alignment: AlignRight; padding: 5px; border: none; background-color: #F2F2F2;}";
 
     ui->radioButtonSimple->setStyleSheet(StyleSheetRadioButton);
     ui->radioButtonCompl->setStyleSheet( StyleSheetRadioButton);
     pushButtonBackSpace->setStyleSheet(  StyleSheetBackSpace);
     pushButtonClear->setStyleSheet(      StyleSheetClear);
-    ui->label->setStyleSheet(            StyleSheetLabel);
+    ui->lineEdit->setStyleSheet(         StyleSheetLine);
 
     pushButtonBackSpace->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     pushButtonClear->setSizePolicy(    QSizePolicy::Preferred, QSizePolicy::Preferred);
-
-    ui->label->setText("123456.45"); // check wrapping!
 
     defaultCalcLayout = new QGridLayout(this);
     defaultCalcLayout->setSpacing(0);
     defaultCalcLayout->setContentsMargins(0, 0, 0, 0);
 
-    defaultCalcLayout->addWidget(ui->label,             0, 0, 2, 5);
+    defaultCalcLayout->addWidget(ui->lineEdit,          0, 0, 2, 5);
     defaultCalcLayout->addWidget(ui->radioButtonSimple, 2, 0, 1, 3);
     defaultCalcLayout->addWidget(ui->radioButtonCompl,  3, 0, 1, 3);
     defaultCalcLayout->addWidget(pushButtonBackSpace,   2, 3, 2, 1);
@@ -315,4 +313,215 @@ void MainWindow::CreateDefaultCalcWidget() {
 
     connect(pushButtonClear,     SIGNAL(clicked()), this, SLOT(ClearInput()));
     connect(pushButtonBackSpace, SIGNAL(clicked()), this, SLOT(BackSpace()));
+}
+
+bool MainWindow::OnlyDigits() {
+    return digits_only;
+}
+
+void MainWindow::SetDigits(bool new_state) {
+    digits_only = new_state;
+}
+
+void MainWindow::NumberClicked() {
+    QString number = ((QPushButton*)sender())->text();
+    if (number == "\u03C0") {
+        double pi = 3.1415926535897932384626433832795;
+        ui->lineEdit->setText(ui->lineEdit->text() + QString(std::to_string(pi).c_str()));
+    }
+    else
+        ui->lineEdit->setText(ui->lineEdit->text() + number);
+}
+
+void MainWindow::DotClicked() {
+    if (ui->lineEdit->text().length()) {
+        if (ui->lineEdit->text().at(ui->lineEdit->text().length() - 1) != '.')
+            ui->lineEdit->setText(ui->lineEdit->text() + ".");
+    } else
+        ui->lineEdit->setText("0." + ui->lineEdit->text());
+}
+
+void MainWindow::SignClicked() {
+    if (OnlyDigits()) {
+        QString symbol = ((QPushButton*)sender())->text();
+        if (ui->lineEdit->text().length()) {
+            ui->lineEdit->setText(ui->lineEdit->text() + symbol);
+            SetDigits(false);
+        } else if (symbol == "-")
+            ui->lineEdit->setText(symbol + ui->lineEdit->text());
+    }
+}
+
+double fact(double N) {
+    if (N < 0)
+        return 0;
+    if (N == 0.0)
+        return 1;
+    else
+        return N * fact((int)floor(N) - 1);
+}
+
+void MainWindow::SpecialSignClicked() {
+    SetDigits(true);
+    std::string symbol = ((QPushButton*)sender())->text().toStdString();
+    std::string expression = ui->lineEdit->text().toStdString();
+    if (expression == "")
+        return;
+    double number = std::stod(expression);
+    if (symbol == "\u221A") // sqrt
+        number = std::sqrt(number);
+    else if (symbol == "sin")
+        number = std::sin(number);
+    else if (symbol == "sh")
+        number = std::sinh(number);
+    else if (symbol == "e\u207F") // exp
+        number = std::exp(number);
+    else if (symbol == "x\u00B2") // x^2
+        number *= number;
+    else if (symbol == "ch")
+        number = std::cosh(number);
+    else if (symbol == "cos")
+        number = std::cos(number);
+    else if (symbol == "ln")
+        number = std::log(number);
+    else if (symbol == "\u00B3\u221A") // x^(1/3)
+        number = std::cbrt(number);
+    else if (symbol == "x\u00B3") // x^3
+        number *= (number * number);
+    else if (symbol == "th")
+        number = std::tanh(number);
+    else if (symbol == "tan")
+        number = std::tan(number);
+    else if (symbol == "log")
+        number = std::log10(number);
+    else if (symbol == "n!") {
+        if (std::floor(number) != number) {
+            ui->lineEdit->setText(QString("nan"));
+            return;
+        }
+        else
+            number = fact(number);
+    }
+    expression = std::to_string(number);
+    while (*(expression.rbegin()) == '0')
+        expression.pop_back();
+    if (*(expression.rbegin()) == '.')
+        expression.pop_back();
+    ui->lineEdit->setText(QString(expression.c_str()));
+}
+
+void MainWindow::FunctionClicked() {
+    SetDigits(false);
+    std::string symbol = ((QPushButton*)sender())->text().toStdString();
+    if (ui->lineEdit->text() == "")
+        return;
+    if (symbol == "x\u207F") // x^n
+        ui->lineEdit->setText(ui->lineEdit->text() + ", n = ");
+    else if (symbol == "\u207F\u221A") // x^(1/n)
+        ui->lineEdit->setText(ui->lineEdit->text() + ", (x^(1/n)) n = ");
+}
+
+void MainWindow::ClearInput() {
+    ui->lineEdit->clear();
+    SetDigits(true);
+}
+
+void MainWindow::BackSpace() {
+    int length = ui->lineEdit->text().length();
+    if (length) {
+        char last_char = ui->lineEdit->text().at(length - 1).toLatin1();
+        if (!std::isdigit(last_char))
+            SetDigits(true);
+        ui->lineEdit->setText(ui->lineEdit->text().left(length - 1));
+    }
+}
+
+void MainWindow::Equals() {
+    SetDigits(true);
+    std::string expression = ui->lineEdit->text().toStdString();
+    std::string search_slice = expression.substr(1);
+    std::string answer = "";
+    if (!std::isdigit(*(expression.rbegin())))
+        BackSpace();
+    if (search_slice.find('+') != std::string::npos) {
+        std::string::size_type position;
+        double left_number  = std::stod(expression, &position);
+        double right_number = std::stod(expression.substr(position + 1));
+        double answer_number = left_number + right_number;
+        answer = std::to_string(answer_number);
+        while (*(answer.rbegin()) == '0')
+            answer.pop_back();
+        if (*(answer.rbegin()) == '.')
+            answer.pop_back();
+        ui->lineEdit->setText(QString(answer.c_str()));
+    } else if (search_slice.find('-') != std::string::npos) {
+        std::string::size_type position;
+        double left_number  = std::stod(expression, &position);
+        double right_number = std::stod(expression.substr(position + 1));
+        double answer_number = left_number - right_number;
+        answer = std::to_string(answer_number);
+        while (*(answer.rbegin()) == '0')
+            answer.pop_back();
+        if (*(answer.rbegin()) == '.')
+            answer.pop_back();
+        ui->lineEdit->setText(QString(answer.c_str()));
+    } else if (search_slice.find("\u00D7") != std::string::npos) { // *
+        std::string::size_type position;
+        double left_number  = std::stod(expression, &position);
+        double right_number = std::stod(expression.substr(position + 2));
+        double answer_number = left_number * right_number;
+        answer = std::to_string(answer_number);
+        while (*(answer.rbegin()) == '0')
+            answer.pop_back();
+        if (*(answer.rbegin()) == '.')
+            answer.pop_back();
+        ui->lineEdit->setText(QString(answer.c_str()));
+    } else if (search_slice.find("\u00F7") != std::string::npos) { // /
+        std::string::size_type position;
+        double left_number  = std::stod(expression, &position);
+        double right_number = std::stod(expression.substr(position + 2));
+        double answer_number = left_number / right_number;
+        answer = std::to_string(answer_number);
+        while (*(answer.rbegin()) == '0')
+            answer.pop_back();
+        if (*(answer.rbegin()) == '.')
+            answer.pop_back();
+        ui->lineEdit->setText(QString(answer.c_str()));
+    } else if (search_slice.find(", n = ") != std::string::npos) { // x^n
+    std::string::size_type position;
+    double left_number  = std::stod(expression, &position);
+    double right_number = std::stod(expression.substr(position + 5));
+    double answer_number = std::pow(left_number, right_number);
+    answer = std::to_string(answer_number);
+    while (*(answer.rbegin()) == '0')
+        answer.pop_back();
+    if (*(answer.rbegin()) == '.')
+        answer.pop_back();
+    ui->lineEdit->setText(QString(answer.c_str()));
+    } else if (search_slice.find(", (x^(1/n)) n = ") != std::string::npos) { // x^(1/n)
+    std::string::size_type position;
+    double left_number  = std::stod(expression, &position);
+    double right_number = std::stod(expression.substr(position + 16));
+    double answer_number = std::pow(left_number, (1 / right_number));
+    answer = std::to_string(answer_number);
+    while (*(answer.rbegin()) == '0')
+        answer.pop_back();
+    if (*(answer.rbegin()) == '.')
+        answer.pop_back();
+    ui->lineEdit->setText(QString(answer.c_str()));
+    }
+}
+
+void MainWindow::Invert() {
+    std::string expression = ui->lineEdit->text().toStdString();
+    if (expression == "")
+        return;
+    double number = std::stod(expression);
+    number = 1 / number;
+    expression = std::to_string(number);
+    while (*(expression.rbegin()) == '0')
+        expression.pop_back();
+    if (*(expression.rbegin()) == '.')
+        expression.pop_back();
+    ui->lineEdit->setText(QString(expression.c_str()));
 }
