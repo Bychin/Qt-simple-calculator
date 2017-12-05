@@ -9,14 +9,11 @@ ApplicationWindow {
     width: (rb1.checked) ? 380 : 684
     height: 450
     maximumHeight: height
-    //maximumWidth: (rb1.checked) ? 380 : 684
+    maximumWidth: 684
     minimumHeight: height
-    //minimumWidth: (rb1.checked) ? 380 : 684
+    minimumWidth: 380
     title: (rb1.checked) ? qsTr("Calculator (simple)") : qsTr("Calculator (engineering)")
     color: "#E6E6E6"
-
-    //onWidthChanged: controller.reload()
-    //onHeightChanged: controller.reload()
 
     function operatorPressed(operator) {
         CalcEngine.operatorPressed(operator)
@@ -33,39 +30,7 @@ ApplicationWindow {
     Display {
         id: display
         width: mainWindow.width
-        height: 80 //?? // need to setup display's sizes
-
-        /*MouseArea {
-            property real startX: 0
-            property real oldP: 0
-            property bool rewind: false
-
-            height: 50
-            anchors {
-                bottom: parent.bottom
-                left: parent.left
-                right: parent.right
-            }
-
-            onPositionChanged: {
-                var reverse = startX > window.width / 2
-                var mx = mapToItem(window, mouse.x,0).x
-                var p = Math.abs((mx - startX) / (window.width - display.width))
-                if (p < oldP)
-                    rewind = reverse ? false : true
-                else
-                    rewind = reverse ? true : false
-                controller.progress = reverse ? 1 - p : p
-                oldP = p
-            }
-            /*onPressed: startX = mapToItem(window, mouse.x,0).x
-            onReleased: {
-                if (rewind)
-                    controller.completeToBeginning()
-                else
-                    controller.completeToEnd()
-            }
-        }*/
+        height: 80
     }
 
     Item {
@@ -134,19 +99,4 @@ ApplicationWindow {
         text: qsTr("Engineering")
         anchors.top: rb1.bottom
     }
-
-    /*AnimationController {
-        id: controller
-        animation: ParallelAnimation {
-            id: anim
-            NumberAnimation { target: display; property: "x"; duration: 400; from: -16; to: window.width - display.width; easing.type: Easing.InOutQuad }
-            NumberAnimation { target: pad; property: "x"; duration: 400; from: window.width - pad.width; to: 0; easing.type: Easing.InOutQuad }
-            SequentialAnimation {
-                NumberAnimation { target: pad; property: "scale"; duration: 200; from: 1; to: 0.97; easing.type: Easing.InOutQuad }
-                NumberAnimation { target: pad; property: "scale"; duration: 200; from: 0.97; to: 1; easing.type: Easing.InOutQuad }
-            }
-        }
-    }*/
-
-
 }

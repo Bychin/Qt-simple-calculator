@@ -1,6 +1,7 @@
 import QtQuick 2.5
 import QtQuick.Window 2.0
 
+
 Item {
     id: display
     property real fontSize: 40//Math.floor(Screen.pixelDensity * 5.0)
@@ -81,49 +82,28 @@ Item {
     }
 
     Item {
-        id: theItem
-        width: parent.width// + 32
+        id: screenItem
+        width: parent.width
         height: parent.height
 
         Rectangle {
             id: rect
-            //x: 16
             color: "white"
             height: parent.height
-            width: display.width// - 16
-        }/*
-        Image {
-            anchors.right: rect.left
-            source: "images/paper-edge-left.png"
-            height: parent.height
-            fillMode: Image.TileVertically
+            width: display.width
         }
-        Image {
-            anchors.left: rect.right
-            source: "images/paper-edge-right.png"
-            height: parent.height
-            fillMode: Image.TileVertically
-        }
-
-        Image {
-            id: grip
-            source: "images/paper-grip.png"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 20
-        }*/
 
         ListView {
             id: listView
-            x: 16; y: 30
+            //x: 16; y: 30
             width: display.width
-            height: display.height - 50 - y
+            height: display.height
             delegate: Item {
                 height: display.fontSize * 1.1
                 width: parent.width
                 Text {
                     id: operator
-                    x: 6
+                    //x: 5
                     font.pixelSize: display.fontSize
                     color: "#6da43d"
                     text: model.operator
@@ -132,7 +112,7 @@ Item {
                     id: operand
                     font.pixelSize: display.fontSize
                     anchors.right: parent.right
-                    anchors.rightMargin: 22
+                    anchors.rightMargin: 20
                     text: model.operand
                 }
             }

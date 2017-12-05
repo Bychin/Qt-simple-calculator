@@ -1,10 +1,9 @@
 import QtQuick 2.5
 
+
 Rectangle {
     id: button
     property alias text: textItem.text
-    //property color color: "white"
-
     property bool operator: false
     property bool dimmable: false
     property bool dimmed: false
@@ -19,8 +18,6 @@ Rectangle {
     Text {
         id: textItem
         font.pixelSize: 35
-        //wrapMode: Text.WordWrap
-        //lineHeight: 0.75
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         color: "black"
