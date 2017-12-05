@@ -1,16 +1,13 @@
-//
-// Created by Bychin on 17.11.2017.
-//
-
-#include "mainwindow.h"
-#include <QApplication>
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
 
 int main(int argc, char *argv[]) {
-    QApplication a(argc, argv);
-    a.setWindowIcon(QIcon("C:\\Users\\Bychin\\Documents\\_Projects\\QtProjects\\build-simple_calculator-Desktop_Qt_5_9_2_MinGW_32bit-Debug\\logo.png"));
+    QGuiApplication app(argc, argv);
 
-    MainWindow window;
-    window.show();
+    QQmlApplicationEngine engine;
+    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+    if (engine.rootObjects().isEmpty())
+        return -1;
 
-    return a.exec();
+    return app.exec();
 }
