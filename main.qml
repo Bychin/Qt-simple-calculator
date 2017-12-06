@@ -31,6 +31,7 @@ ApplicationWindow {
         id: display
         width: mainWindow.width
         height: 80
+        maxDigits: (rb1.checked) ? 14 : 24
     }
 
     Item {
@@ -67,8 +68,8 @@ ApplicationWindow {
                 operatorPressed("=")
             else if (event.key === Qt.Key_Comma || event.key === Qt.Key_Period)
                 digitPressed(".")
-            else if (event.key === Qt.Key_Backspace)
-                operatorPressed("backspace")
+            //else if (event.key === Qt.Key_Backspace)
+              //  operatorPressed("\u232B")
             else if (event.key === Qt.Key_Delete)
                 operatorPressed("C")
         }

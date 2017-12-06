@@ -50,8 +50,18 @@ Item {
     }
 
     function displayNumber(num) {
-        if (typeof(num) != "number")
+        if (num === 3.14159265359) {
+            console.log("hmmm")
+            setDigit(3.14159265359)
+            return
+        }
+        if (typeof(num) != "number") {
+            console.log("YAY")
             return errorString;
+        }
+
+        if (num === "Infinity") //?????
+            return "Infinity"
 
         var intNum = parseInt(num);
         var intLen = intNum.toString().length;
@@ -105,7 +115,7 @@ Item {
                     id: operator
                     //x: 5
                     font.pixelSize: display.fontSize
-                    color: "#6da43d"
+                    color: "grey"
                     text: model.operator
                 }
                 Text {

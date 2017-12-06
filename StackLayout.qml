@@ -15,7 +15,7 @@ StackLayout {
 
         signal buttonPressed
 
-        Button { text: "\u232B";  operator: true; Layout.row: 0; Layout.column: 3 } // "<"
+        //Button { text: "\u232B";  operator: true; Layout.row: 0; Layout.column: 3 } // "<"
         Button { text: "C";  operator: true; Layout.row: 0; Layout.column: 4 }
 
         Button { text: "7" }
@@ -37,8 +37,9 @@ StackLayout {
 
         Button { text: "="; operator: true; dimmable: true; Layout.row: 3; Layout.column: 4; Layout.fillHeight: true; Layout.rowSpan: 2 }
 
-        Button { text: "0"; Layout.row: 4; Layout.column: 0; Layout.fillWidth: true; Layout.columnSpan: 2 }
+        Button { text: "0"; Layout.row: 4; Layout.column: 0 }
         Button { text: "."; dimmable: true }
+        Button { text: "±"; operator: true }
         Button { text: "+"; operator: true; dimmable: true }
     }
 
@@ -51,7 +52,7 @@ StackLayout {
 
         signal buttonPressed
 
-        Button { text: "\u232B";  operator: true; Layout.row: 0; Layout.column: 5; Layout.columnSpan: 2; Layout.fillWidth: true } // "<"
+        //Button { text: "\u232B";  operator: true; Layout.row: 0; Layout.column: 5; Layout.columnSpan: 2; Layout.fillWidth: true } // "<"
         Button { text: "C";  operator: true; Layout.row: 0; Layout.column: 7; Layout.columnSpan: 2; Layout.fillWidth: true }
 
         Button { text: "sh"; operator: true; dimmable: true }
@@ -86,11 +87,12 @@ StackLayout {
         Button { text: "="; operator: true; dimmable: true; Layout.row: 3; Layout.column: 8; Layout.fillHeight: true; Layout.rowSpan: 2 }
 
         Button { text: "n!"; operator: true; dimmable: true }
-        Button { text: "\u03C0"; operator: true; dimmable: true } // "pi"
+        Button { text: "\u03C0" } // "pi"
         Button { text: "\u00B3\u221A"; operator: true; dimmable: true } // "3√"
         Button { text: "\u207F\u221A"; operator: true; dimmable: true } // "n√"
-        Button { text: "0"; Layout.row: 4; Layout.column: 4; Layout.fillWidth: true; Layout.columnSpan: 2 }
+        Button { text: "0"; Layout.row: 4; Layout.column: 4 }
         Button { text: "."; dimmable: true }
+        Button { text: "±"; operator: true }
         Button { text: "+"; operator: true; dimmable: true }
     }
 }
