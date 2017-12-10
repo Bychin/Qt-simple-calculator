@@ -49,15 +49,13 @@ public slots:
     void SwitchMode();
 
     void NumberClicked();
-    void SpecialSignClicked();
-    void SignClicked();
+    void UnFnClicked();
+    void BinFnClicked();
     void DotClicked();
-    void FunctionClicked();
 
     void ClearInput();
     void BackSpace();
     void Equals();
-    void Invert();
 };
 
 #endif // MAINWINDOW_H
