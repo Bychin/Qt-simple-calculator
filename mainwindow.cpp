@@ -6,7 +6,15 @@
 #include "ui_mainwindow.h"
 
 #include <cctype>
+#include <cmath>
 
+#if _WIN32
+#define SEPARATOR '.'
+#endif
+
+#if __unix
+#define SEPARATOR ','
+#endif
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
@@ -96,7 +104,7 @@ void MainWindow::CreateSimpleCalcWidget() {
     QPushButton* pushButtonDivide = new QPushButton(QString::fromUtf8("\u00F7"));
     QPushButton* pushButtonEquals = new QPushButton("=");
     QPushButton* pushButtonSqrt =   new QPushButton(QString::fromUtf8("\u221A"));
-    QPushButton* pushButtonInvert = new QPushButton(QString::fromUtf8("\u00B9\u0337\u2093"));
+    QPushButton* pushButtonInvert = new QPushButton(QString::fromUtf8("x\u207B\u00B9"));
 
     pushButton0->setSizePolicy(     QSizePolicy::Preferred, QSizePolicy::Preferred);
     pushButton1->setSizePolicy(     QSizePolicy::Preferred, QSizePolicy::Preferred);
@@ -174,14 +182,14 @@ void MainWindow::CreateSimpleCalcWidget() {
     connect(pushButton7,      SIGNAL(clicked()), this, SLOT(NumberClicked()));
     connect(pushButton8,      SIGNAL(clicked()), this, SLOT(NumberClicked()));
     connect(pushButton9,      SIGNAL(clicked()), this, SLOT(NumberClicked()));
-    connect(pushButtonPlus,   SIGNAL(clicked()), this, SLOT(SignClicked()));
-    connect(pushButtonMinus,  SIGNAL(clicked()), this, SLOT(SignClicked()));
-    connect(pushButtonMult,   SIGNAL(clicked()), this, SLOT(SignClicked()));
-    connect(pushButtonDivide, SIGNAL(clicked()), this, SLOT(SignClicked()));
-    connect(pushButtonSqrt,   SIGNAL(clicked()), this, SLOT(SpecialSignClicked()));
+    connect(pushButtonPlus,   SIGNAL(clicked()), this, SLOT(BinFnClicked()));
+    connect(pushButtonMinus,  SIGNAL(clicked()), this, SLOT(BinFnClicked()));
+    connect(pushButtonMult,   SIGNAL(clicked()), this, SLOT(BinFnClicked()));
+    connect(pushButtonDivide, SIGNAL(clicked()), this, SLOT(BinFnClicked()));
+    connect(pushButtonSqrt,   SIGNAL(clicked()), this, SLOT(UnFnClicked()));
     connect(pushButtonDot,    SIGNAL(clicked()), this, SLOT(DotClicked()));
     connect(pushButtonEquals, SIGNAL(clicked()), this, SLOT(Equals()));
-    connect(pushButtonInvert, SIGNAL(clicked()), this, SLOT(Invert()));
+    connect(pushButtonInvert, SIGNAL(clicked()), this, SLOT(UnFnClicked()));
 }
 
 void MainWindow::CreateComplCalcWidget() {
@@ -262,21 +270,21 @@ void MainWindow::CreateComplCalcWidget() {
     complCalcWidget = new QWidget(this);
     complCalcWidget->setLayout(complCalcLayout);
 
-    connect(pushButtonSin,      SIGNAL(clicked()), this, SLOT(SpecialSignClicked()));
-    connect(pushButtonSinh,     SIGNAL(clicked()), this, SLOT(SpecialSignClicked()));
-    connect(pushButtonCos,      SIGNAL(clicked()), this, SLOT(SpecialSignClicked()));
-    connect(pushButtonCosh,     SIGNAL(clicked()), this, SLOT(SpecialSignClicked()));
-    connect(pushButtonFact,     SIGNAL(clicked()), this, SLOT(SpecialSignClicked()));
-    connect(pushButtonTan,      SIGNAL(clicked()), this, SLOT(SpecialSignClicked()));
-    connect(pushButtonTanh,     SIGNAL(clicked()), this, SLOT(SpecialSignClicked()));
-    connect(pushButtonLn,       SIGNAL(clicked()), this, SLOT(SpecialSignClicked()));
-    connect(pushButtonLog,      SIGNAL(clicked()), this, SLOT(SpecialSignClicked()));
-    connect(pushButtonXNed,     SIGNAL(clicked()), this, SLOT(FunctionClicked()));
-    connect(pushButtonXSq,      SIGNAL(clicked()), this, SLOT(SpecialSignClicked()));
-    connect(pushButtonXCubed,   SIGNAL(clicked()), this, SLOT(SpecialSignClicked()));
-    connect(pushButtonCubeRoot, SIGNAL(clicked()), this, SLOT(SpecialSignClicked()));
-    connect(pushButtonNRoot,    SIGNAL(clicked()), this, SLOT(FunctionClicked()));
-    connect(pushButtonExp,      SIGNAL(clicked()), this, SLOT(SpecialSignClicked()));
+    connect(pushButtonSin,      SIGNAL(clicked()), this, SLOT(UnFnClicked()));
+    connect(pushButtonSinh,     SIGNAL(clicked()), this, SLOT(UnFnClicked()));
+    connect(pushButtonCos,      SIGNAL(clicked()), this, SLOT(UnFnClicked()));
+    connect(pushButtonCosh,     SIGNAL(clicked()), this, SLOT(UnFnClicked()));
+    connect(pushButtonFact,     SIGNAL(clicked()), this, SLOT(UnFnClicked()));
+    connect(pushButtonTan,      SIGNAL(clicked()), this, SLOT(UnFnClicked()));
+    connect(pushButtonTanh,     SIGNAL(clicked()), this, SLOT(UnFnClicked()));
+    connect(pushButtonLn,       SIGNAL(clicked()), this, SLOT(UnFnClicked()));
+    connect(pushButtonLog,      SIGNAL(clicked()), this, SLOT(UnFnClicked()));
+    connect(pushButtonXNed,     SIGNAL(clicked()), this, SLOT(BinFnClicked()));
+    connect(pushButtonXSq,      SIGNAL(clicked()), this, SLOT(UnFnClicked()));
+    connect(pushButtonXCubed,   SIGNAL(clicked()), this, SLOT(UnFnClicked()));
+    connect(pushButtonCubeRoot, SIGNAL(clicked()), this, SLOT(UnFnClicked()));
+    connect(pushButtonNRoot,    SIGNAL(clicked()), this, SLOT(BinFnClicked()));
+    connect(pushButtonExp,      SIGNAL(clicked()), this, SLOT(UnFnClicked()));
     connect(pushButtonPi,       SIGNAL(clicked()), this, SLOT(NumberClicked())); ///
 }
 
@@ -335,17 +343,22 @@ void MainWindow::NumberClicked() {
 
 void MainWindow::DotClicked() {
     if (ui->lineEdit->text().length()) {
-        if (ui->lineEdit->text().at(ui->lineEdit->text().length() - 1) != '.')
-            ui->lineEdit->setText(ui->lineEdit->text() + ".");
+        if (ui->lineEdit->text().at(ui->lineEdit->text().length() - 1) != SEPARATOR)
+            ui->lineEdit->setText(ui->lineEdit->text() + SEPARATOR);
     } else
-        ui->lineEdit->setText("0." + ui->lineEdit->text());
+        ui->lineEdit->setText("0" + SEPARATOR + ui->lineEdit->text());
 }
 
-void MainWindow::SignClicked() {
+void MainWindow::BinFnClicked() {
     if (OnlyDigits()) {
         QString symbol = ((QPushButton*)sender())->text();
         if (ui->lineEdit->text().length()) {
-            ui->lineEdit->setText(ui->lineEdit->text() + symbol);
+            if (symbol == "x\u207F") // x^n
+                ui->lineEdit->setText(ui->lineEdit->text() + ", x\u207F n = ");
+            else if (symbol == "\u207F\u221A") // x^(1/n)
+                ui->lineEdit->setText(ui->lineEdit->text() + ", \u207F\u221Ax n = ");
+            else
+                ui->lineEdit->setText(ui->lineEdit->text() + symbol);
             SetDigits(false);
         } else if (symbol == "-")
             ui->lineEdit->setText(symbol + ui->lineEdit->text());
@@ -361,7 +374,7 @@ double fact(double N) {
         return N * fact((int)floor(N) - 1);
 }
 
-void MainWindow::SpecialSignClicked() {
+void MainWindow::UnFnClicked() {
     SetDigits(true);
     std::string symbol = ((QPushButton*)sender())->text().toStdString();
     std::string expression = ui->lineEdit->text().toStdString();
@@ -401,25 +414,23 @@ void MainWindow::SpecialSignClicked() {
         }
         else
             number = fact(number);
+    }else if (symbol == "x\u207B\u00B9"){
+        number = 1 / number;
+        expression = std::to_string(number);
+        while (*(expression.rbegin()) == '0')
+            expression.pop_back();
+        if (*(expression.rbegin()) == SEPARATOR)
+            expression.pop_back();
+        ui->lineEdit->setText(QString(expression.c_str()));
     }
     expression = std::to_string(number);
     while (*(expression.rbegin()) == '0')
         expression.pop_back();
-    if (*(expression.rbegin()) == '.')
+    if (*(expression.rbegin()) == SEPARATOR)
         expression.pop_back();
     ui->lineEdit->setText(QString(expression.c_str()));
 }
 
-void MainWindow::FunctionClicked() {
-    SetDigits(false);
-    std::string symbol = ((QPushButton*)sender())->text().toStdString();
-    if (ui->lineEdit->text() == "")
-        return;
-    if (symbol == "x\u207F") // x^n
-        ui->lineEdit->setText(ui->lineEdit->text() + ", n = ");
-    else if (symbol == "\u207F\u221A") // x^(1/n)
-        ui->lineEdit->setText(ui->lineEdit->text() + ", (x^(1/n)) n = ");
-}
 
 void MainWindow::ClearInput() {
     ui->lineEdit->clear();
@@ -451,7 +462,7 @@ void MainWindow::Equals() {
         answer = std::to_string(answer_number);
         while (*(answer.rbegin()) == '0')
             answer.pop_back();
-        if (*(answer.rbegin()) == '.')
+        if (*(answer.rbegin()) == SEPARATOR)
             answer.pop_back();
         ui->lineEdit->setText(QString(answer.c_str()));
     } else if (search_slice.find('-') != std::string::npos) {
@@ -462,7 +473,7 @@ void MainWindow::Equals() {
         answer = std::to_string(answer_number);
         while (*(answer.rbegin()) == '0')
             answer.pop_back();
-        if (*(answer.rbegin()) == '.')
+        if (*(answer.rbegin()) == SEPARATOR)
             answer.pop_back();
         ui->lineEdit->setText(QString(answer.c_str()));
     } else if (search_slice.find("\u00D7") != std::string::npos) { // *
@@ -473,7 +484,7 @@ void MainWindow::Equals() {
         answer = std::to_string(answer_number);
         while (*(answer.rbegin()) == '0')
             answer.pop_back();
-        if (*(answer.rbegin()) == '.')
+        if (*(answer.rbegin()) == SEPARATOR)
             answer.pop_back();
         ui->lineEdit->setText(QString(answer.c_str()));
     } else if (search_slice.find("\u00F7") != std::string::npos) { // /
@@ -484,44 +495,31 @@ void MainWindow::Equals() {
         answer = std::to_string(answer_number);
         while (*(answer.rbegin()) == '0')
             answer.pop_back();
-        if (*(answer.rbegin()) == '.')
+        if (*(answer.rbegin()) == SEPARATOR)
             answer.pop_back();
         ui->lineEdit->setText(QString(answer.c_str()));
-    } else if (search_slice.find(", n = ") != std::string::npos) { // x^n
-    std::string::size_type position;
-    double left_number  = std::stod(expression, &position);
-    double right_number = std::stod(expression.substr(position + 5));
-    double answer_number = std::pow(left_number, right_number);
-    answer = std::to_string(answer_number);
-    while (*(answer.rbegin()) == '0')
-        answer.pop_back();
-    if (*(answer.rbegin()) == '.')
-        answer.pop_back();
-    ui->lineEdit->setText(QString(answer.c_str()));
-    } else if (search_slice.find(", (x^(1/n)) n = ") != std::string::npos) { // x^(1/n)
-    std::string::size_type position;
-    double left_number  = std::stod(expression, &position);
-    double right_number = std::stod(expression.substr(position + 16));
-    double answer_number = std::pow(left_number, (1 / right_number));
-    answer = std::to_string(answer_number);
-    while (*(answer.rbegin()) == '0')
-        answer.pop_back();
-    if (*(answer.rbegin()) == '.')
-        answer.pop_back();
-    ui->lineEdit->setText(QString(answer.c_str()));
+    } else if (search_slice.find(", x\u207F n = ") != std::string::npos) { // x^n
+        std::string::size_type position;
+        double left_number  = std::stod(expression, &position);
+        double right_number = std::stod(ui->lineEdit->text().split(", x\u207F n = ")[1].toStdString());
+        double answer_number = std::pow(left_number, right_number);
+        answer = std::to_string(answer_number);
+        while (*(answer.rbegin()) == '0')
+            answer.pop_back();
+        if (*(answer.rbegin()) == SEPARATOR)
+            answer.pop_back();
+        ui->lineEdit->setText(QString(answer.c_str()));
+    } else if (search_slice.find(", \u207F\u221Ax n = ") != std::string::npos) { // x^(1/n)
+        std::string::size_type position;
+        double left_number  = std::stod(expression, &position);
+        double right_number = std::stod(ui->lineEdit->text().split(", \u207F\u221Ax n = ")[1].toStdString());
+        double answer_number = std::pow(left_number, (1 / right_number));
+        answer = std::to_string(answer_number);
+        while (*(answer.rbegin()) == '0')
+            answer.pop_back();
+        if (*(answer.rbegin()) == SEPARATOR)
+            answer.pop_back();
+        ui->lineEdit->setText(QString(answer.c_str()));
     }
 }
 
-void MainWindow::Invert() {
-    std::string expression = ui->lineEdit->text().toStdString();
-    if (expression == "")
-        return;
-    double number = std::stod(expression);
-    number = 1 / number;
-    expression = std::to_string(number);
-    while (*(expression.rbegin()) == '0')
-        expression.pop_back();
-    if (*(expression.rbegin()) == '.')
-        expression.pop_back();
-    ui->lineEdit->setText(QString(expression.c_str()));
-}
